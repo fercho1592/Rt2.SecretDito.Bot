@@ -6,6 +6,7 @@ from models.User import User
 from models.WishListItem import WishListItem
 
 async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    del context
     help_text = (
         'Comandos disponibles:\n'
         '/registro - Regístrate para usar el bot.\n'
@@ -17,6 +18,7 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     pass
 
 async def registro_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    del context
     try:
         repo = getRepoInstance()
         user = await repo.getUserById(update.message.from_user.id)
@@ -36,6 +38,7 @@ async def registro_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     pass
 
 async def get_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    del context
     try:
         repo = getRepoInstance()
         # validar que usuario este registrado
@@ -51,7 +54,7 @@ async def get_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TY
         await repo.updateUser(user)
 
         if user.username is None and user.name is None:
-            await update.message.reply_text(f'Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
+            await update.message.reply_text('Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
     except Exception as e:
         print(f'Error en getWishListHandler: {e}')
         await update.message.reply_text('Ocurrió un error al obtener tu wish list. Reporta al inutil del administrador para que haga algo.')
@@ -73,7 +76,7 @@ async def wish_list_register_handler(update: Update, context: ContextTypes.DEFAU
                                            message_id=update.message.message_id,
                                            reaction=ReactionEmoji.THUMBS_UP)
         if user.username is None and user.name is None:
-            await update.message.reply_text(f'Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
+            await update.message.reply_text('Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
     except Exception as e:
         print(f'Error en wishListReigisterHandler: {e}')
         await update.message.reply_text('Ocurrió un error al registrar tu wish list. Reporta al inutil del administrador para que haga algo.')
