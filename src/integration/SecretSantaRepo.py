@@ -5,7 +5,7 @@ from models.User import User
 from typing import Optional
 
 
-USER_DATA_DIR = Path("data/users")
+USER_DATA_DIR = Path("data")
 
 
 class SecretSantaRepo(ISecretDitoRepo):
@@ -15,8 +15,9 @@ class SecretSantaRepo(ISecretDitoRepo):
     """
 
     def __init__(self, data_dir=USER_DATA_DIR):
+
         self.data_dir = Path(data_dir)
-        self.data_dir.mkdir(exist_ok=True)
+        self.data_dir.mkdir(parents=True, exist_ok=True)
     
     def _get_filepath(self, user_id: int) -> Path:
         """Obtiene la ruta completa del archivo JSON para un usuario específico."""
