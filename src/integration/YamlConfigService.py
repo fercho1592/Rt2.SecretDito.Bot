@@ -3,7 +3,7 @@ from interfaces.config_reader.ConfigEnum import ConfigEnum
 from interfaces.config_reader.IConfigService import IConfigService
 
 class YamlConfigService(IConfigService):
-    def __init__(self, config_path: str = "config/settings.yaml"):
+    def __init__(self, config_path: str = ".env"):
         with open(config_path, "r") as file:
             self.config = yaml.safe_load(file)
 
