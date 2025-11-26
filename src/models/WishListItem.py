@@ -18,3 +18,6 @@ class WishListItem():
             item=data.get('item'),
             message_ids=data.get('message_ids', [])
         )
+    
+    def __str__(self):
+        return f"{self.item}"

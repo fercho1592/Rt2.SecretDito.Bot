@@ -5,18 +5,18 @@ from dependency import getRepoInstance
 from models.User import User
 from models.WishListItem import WishListItem
 
-async def helpHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     help_text = (
-        "Comandos disponibles:\n"
-        "/registro - Regístrate para usar el bot.\n"
-        "/wish_list - Obtén tu lista de deseos.\n"
-        "Envía mensajes con los ítems que deseas agregar a tu lista de deseos.\n"
-        "Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista de deseos.\n"
+        'Comandos disponibles:\n'
+        '/registro - Regístrate para usar el bot.\n'
+        '/wish_list - Obtén tu lista de deseos.\n'
+        'Envía mensajes con los ítems que deseas agregar a tu lista de deseos.\n'
+        'Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista de deseos.\n'
     )
     await update.message.reply_text(help_text)
     pass
 
-async def registroHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def registro_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         repo = getRepoInstance()
         user = await repo.getUserById(update.message.from_user.id)
@@ -31,13 +31,12 @@ async def registroHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await update.message.reply_text('Registro completado!')
         await update.message.reply_text('Puedes compartirme tu wish list enviando mensajes con los ítems que deseas agregar.')
     except Exception as e:
-        print(f"Error en registroHandler: {e}")
+        print(f'Error en registroHandler: {e}')
         await update.message.reply_text('Occurrió un error durante el registro. Por favor, intenta de nuevo más tarde.')
     pass
 
-async def getWishListHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    try: 
-            
+async def get_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    try:
         repo = getRepoInstance()
         # validar que usuario este registrado
         user = await repo.getUserById(update.message.from_user.id)
@@ -46,17 +45,19 @@ async def getWishListHandler(update: Update, context: ContextTypes.DEFAULT_TYPE)
             return
 
         for item in user.wish_list:
-            reply_message = await update.message.reply_text(f"{item['item']}")
+            reply_message = await update.message.reply_text(str(item))
             item.message_ids.append(reply_message.message_id)
+
+        await repo.updateUser(user)
 
         if user.username is None and user.name is None:
             await update.message.reply_text(f'Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
     except Exception as e:
-        print(f"Error en getWishListHandler: {e}")
+        print(f'Error en getWishListHandler: {e}')
         await update.message.reply_text('Ocurrió un error al obtener tu wish list. Reporta al inutil del administrador para que haga algo.')
     pass
 
-async def wishListReigisterHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def wish_list_register_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         repo = getRepoInstance()
         # validar que usuario este registrado
@@ -74,13 +75,13 @@ async def wishListReigisterHandler(update: Update, context: ContextTypes.DEFAULT
         if user.username is None and user.name is None:
             await update.message.reply_text(f'Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
     except Exception as e:
-        print(f"Error en wishListReigisterHandler: {e}")
+        print(f'Error en wishListReigisterHandler: {e}')
         await update.message.reply_text('Ocurrió un error al registrar tu wish list. Reporta al inutil del administrador para que haga algo.')
     pass
 
-async def reactionHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
-        print (f"Reaction received: {update}")
+        print (f'Reaction received: {update}')
         repo = getRepoInstance()
         user = await repo.getUserById(update.message_reaction.user.id)
         if user is None:
@@ -107,10 +108,10 @@ async def reactionHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                                                message_id=update.reaction.message.message_id,
                                                reaction=ReactionEmoji.CHECK_MARK)
     except Exception as e:
-        print(f"Error en reactionHandler: {e}")
+        print(f'Error en reactionHandler: {e}')
     pass
 
-async def setNameHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def set_name_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         repo = getRepoInstance()
         user = await repo.getUserById(update.message.from_user.id)
@@ -128,6 +129,6 @@ async def setNameHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await repo.updateUser(user)
         await update.message.reply_text(f'Su nombre ha sido establecido a: {name}')
     except Exception as e:
-        print(f"Error en setNameHandler: {e}")
+        print(f'Error en setNameHandler: {e}')
         await update.message.reply_text('Ocurrió un error al establecer tu nombre. Reporta al inutil del administrador para que haga algo.')
     pass

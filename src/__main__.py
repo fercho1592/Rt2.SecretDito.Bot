@@ -3,7 +3,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, App
 from dependency import getConfigService
 from interfaces.config_reader.ConfigEnum import ConfigEnum
 
-from SecretDitoHandlers import registroHandler, getWishListHandler, wishListReigisterHandler, helpHandler, reactionHandler, setNameHandler
+from SecretDitoHandlers import registro_handler, get_wish_list_handler, wish_list_register_handler, help_handler, reaction_handler, set_name_handler
 
 def BuildApp() -> Application:
     bot_token = getConfigService().get_service_api_key(ConfigEnum.TELEGRAM_TOKEN)
@@ -16,12 +16,12 @@ if __name__ == '__main__':
     app = BuildApp()
     
     print('Registering handlers...')
-    app.add_handler(CommandHandler('registro', registroHandler))
-    app.add_handler(CommandHandler('wish_list', getWishListHandler))
-    app.add_handler(CommandHandler('set_name', setNameHandler))
-    app.add_handler(CommandHandler('help', helpHandler))
-    app.add_handler(MessageReactionHandler(reactionHandler))
-    app.add_handler(MessageHandler(None, wishListReigisterHandler))
+    app.add_handler(CommandHandler('registro', registro_handler))
+    app.add_handler(CommandHandler('wish_list', get_wish_list_handler))
+    app.add_handler(CommandHandler('set_name', set_name_handler))
+    app.add_handler(CommandHandler('help', help_handler))
+    app.add_handler(MessageReactionHandler(reaction_handler))
+    app.add_handler(MessageHandler(None, wish_list_register_handler))
 
     print('Running bot...')
     app.run_polling(allowed_updates=Update.ALL_TYPES)
