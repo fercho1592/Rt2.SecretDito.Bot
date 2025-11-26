@@ -11,7 +11,7 @@ async def helpHandler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         "/registro - Regístrate para usar el bot.\n"
         "/wish_list - Obtén tu lista de deseos.\n"
         "Envía mensajes con los ítems que deseas agregar a tu lista de deseos.\n"
-        "Reacciona a un regalo con :fire: o :thumbs_down: para eliminarlo de tu lista de deseos.\n"
+        "Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista de deseos.\n"
     )
     await update.message.reply_text(help_text)
     pass
