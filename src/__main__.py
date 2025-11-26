@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Application
 
-from TestHandlers import start, messageHandler
+from SecretDitoHandlers import registroHandler, getWishListHandler, wishListReigisterHandler
 
 def BuildApp() -> Application:
     from integration.YamlConfigService import YamlConfigService
@@ -14,10 +14,10 @@ def BuildApp() -> Application:
 if __name__ == '__main__':
     print('Starting bot...')
     app = BuildApp()
-
+    
     print('Registering handlers...')
-    app.add_handler(CommandHandler('start', start))
-    app.add_handler(MessageHandler(None, messageHandler))
-
+    app.add_handler(CommandHandler('registro', registroHandler))
+    app.add_handler(CommandHandler('wish_list', getWishListHandler))
+    app.add_handler(MessageHandler(None, wishListReigisterHandler))
     print('Running bot...')
     app.run_polling(allowed_updates=Update.ALL_TYPES)
