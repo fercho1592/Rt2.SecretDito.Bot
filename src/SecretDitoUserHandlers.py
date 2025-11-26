@@ -5,7 +5,7 @@ from dependency import getRepoInstance
 from models.User import User
 from models.WishListItem import WishListItem
 
-class SecretDitoControllers:
+class SecretDitoUserControllers:
     @staticmethod
     async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
