@@ -79,7 +79,7 @@ class SecretDitoControllers:
             await repo.UpdateUser(user)
             await context.bot.set_message_reaction(chat_id=update.effective_chat.id,
                                             message_id=update.message.message_id,
-                                            reaction=ReactionEmoji.THUMBS_UP)
+                                            reaction=ReactionEmoji.CHRISTMAS_TREE)
             if user.username is None and user.name is None:
                 await update.message.reply_text('Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
         except Exception as e:
@@ -90,7 +90,6 @@ class SecretDitoControllers:
     @staticmethod
     async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         try:
-            print (f'Reaction received: {update}')
             repo = getRepoInstance()
             user = await repo.GetUserById(update.message_reaction.user.id)
             if user is None:
@@ -98,11 +97,8 @@ class SecretDitoControllers:
 
             # Buscar el ítem en la wish list basado en el message_id
             item_to_remove = None
-            # get message text by message id using api
-            message = await context.bot.get_message(chat_id=update.chat.id,
-                                                    message_id=update.message_id)
             for item in user.wish_list:
-                if item['item'] == message.text:
+                if update.message_reaction.message_id in item.message_ids:
                     item_to_remove = item
                     break
 
@@ -110,12 +106,14 @@ class SecretDitoControllers:
                 return
 
             # Verificar la reacción y eliminar el ítem si es necesario
-            if update.new_reaction.emoji in [ReactionEmoji.FIRE, ReactionEmoji.THUMBS_DOWN]:
+            reacted_emoji = [r.emoji for r in update.message_reaction.new_reaction]
+            if any(emoji in [ReactionEmoji.FIRE, ReactionEmoji.THUMBS_DOWN] for emoji in reacted_emoji):
                 user.wish_list.remove(item_to_remove)
                 await repo.UpdateUser(user)
                 await context.bot.set_message_reaction(chat_id=update.effective_chat.id,
-                                                message_id=update.reaction.message.message_id,
-                                                reaction=ReactionEmoji.CHECK_MARK)
+                                                message_id=update.message_reaction.message_id,
+                                                reaction=ReactionEmoji.SEE_NO_EVIL_MONKEY)
+                await update.message.reply_text(f'Ítem {item_to_remove.item} eliminado de tu wish list.')
         except Exception as e:
             print(f'Error en reactionHandler: {e}')
         pass
