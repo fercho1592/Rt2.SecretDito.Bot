@@ -3,7 +3,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, App
 from dependency import getConfigService
 from interfaces.config_reader.ConfigEnum import ConfigEnum
 
-from SecretDitoUserControllers import SecretDitoUserControllers
+from controllers.SecretDitoUserControllers import SecretDitoUserControllers
 
 def BuildApp() -> Application:
     bot_token = getConfigService().get_service_api_key(ConfigEnum.TELEGRAM_TOKEN)
@@ -20,6 +20,7 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler('wish_list', SecretDitoUserControllers.get_wish_list_handler))
     app.add_handler(CommandHandler('set_name', SecretDitoUserControllers.set_name_handler))
     app.add_handler(CommandHandler('help', SecretDitoUserControllers.help_handler))
+    app.add_handler(CommandHandler('start', SecretDitoUserControllers.help_handler))
     app.add_handler(MessageReactionHandler(SecretDitoUserControllers.reaction_handler))
     app.add_handler(MessageHandler(None, SecretDitoUserControllers.wish_list_register_handler))
 
