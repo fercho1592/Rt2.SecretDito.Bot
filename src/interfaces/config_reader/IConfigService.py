@@ -10,3 +10,4 @@ class IConfigService(ABC):
     @abstractmethod
     def get_all_services(self) -> dict:
         """Devuelve todas las configuraciones de servicios."""
+        pass
