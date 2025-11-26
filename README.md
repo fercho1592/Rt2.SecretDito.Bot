@@ -17,8 +17,8 @@ The program use a file `env` for all secrets and setups at root directory level
 ## Virtual env
 Action |CMD
 -------|--------
-Create env| `python3 -m venv .bot-venv`
-Activate|`source ./.bot-venv/bin/activate`
+Create env| `python3 -m venv .venv`
+Activate|`source ./.venv/bin/activate`
 Deactivate|`deactivate`
 
 ### Running
