@@ -1,12 +1,12 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Application, MessageReactionHandler
+from dependency import getConfigService
+from interfaces.config_reader.ConfigEnum import ConfigEnum
 
 from SecretDitoHandlers import registroHandler, getWishListHandler, wishListReigisterHandler, helpHandler, reactionHandler, setNameHandler
 
 def BuildApp() -> Application:
-    from integration.YamlConfigService import YamlConfigService
-    from interfaces.config_reader.ConfigEnum import ConfigEnum
-    bot_token = YamlConfigService().get_service_api_key(ConfigEnum.TELEGRAM_TOKEN)
+    bot_token = getConfigService().get_service_api_key(ConfigEnum.TELEGRAM_TOKEN)
 
     app = ApplicationBuilder().token(bot_token).build()
     return app
