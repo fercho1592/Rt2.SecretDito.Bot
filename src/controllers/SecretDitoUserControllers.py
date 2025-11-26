@@ -2,10 +2,20 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.constants import ReactionEmoji
 from dependency import getRepoInstance
-from models.User import User
 from models.WishListItem import WishListItem
 
 class SecretDitoUserControllers:
+    @staticmethod
+    async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        del context
+        welcome_text = (
+            '¡Bienvenido a SecretDito Bot!\n'
+            'Usa /registro para registrarte y empezar a llenar tu wish list.\n'
+            'O usa el comando /help para ver los comandos disponibles.'
+        )
+        await update.message.reply_text(welcome_text)
+        pass
+
     @staticmethod
     async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
@@ -17,27 +27,6 @@ class SecretDitoUserControllers:
             'Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista de deseos.\n'
         )
         await update.message.reply_text(help_text)
-        pass
-
-    @staticmethod
-    async def registro_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        del context
-        try:
-            repo = getRepoInstance()
-            user = await repo.GetUserById(update.message.from_user.id)
-            if user is not None:
-                await update.message.reply_text('Ya estás registrado.')
-                return
-
-            user = User(update.message.from_user.id, update.message.from_user.username, update.message.chat_id)
-            await repo.CreateUser(user)
-        
-            # Lógica para registrar al usuario
-            await update.message.reply_text('Registro completado!')
-            await update.message.reply_text('Puedes compartirme tu wish list enviando mensajes con los ítems que deseas agregar.')
-        except Exception as e:
-            print(f'Error en registroHandler: {e}')
-            await update.message.reply_text('Occurrió un error durante el registro. Por favor, intenta de nuevo más tarde.')
         pass
 
     @staticmethod

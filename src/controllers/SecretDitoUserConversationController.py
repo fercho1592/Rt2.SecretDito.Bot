@@ -18,11 +18,11 @@ class SecretDitoUserConversationController:
                 await update.message.reply_text('Ya estás registrado.')
                 return
 
-            user = User(update.message.from_user.id, update.message.from_user.username, update.message.chat_id)
+            user = User(update.message.from_user.id, update.message.from_user.username, None, update.message.chat.id)
             await repo.CreateUser(user)
         
             # Lógica para registrar al usuario
-            await update.message.reply_text('Registro completado!')
+            await update.message.reply_text(f'Bien {user.username if user.username else update.message.from_user.first_name}, con esto ya seras tomado en cuenta para el sorteo.')
             await update.message.reply_text('Ayudame a que sea mas facil identificarte. ¿Cuál es tu nombre?')
         except Exception as e:
             print(f'Error en registroHandler: {e}')
@@ -32,6 +32,7 @@ class SecretDitoUserConversationController:
 
     @staticmethod
     async def set_name_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+        del context
         try:
             repo = getRepoInstance()
             user = await repo.GetUserById(update.message.from_user.id)
@@ -47,7 +48,8 @@ class SecretDitoUserConversationController:
 
             user.name = name
             await repo.UpdateUser(user)
-            await update.message.reply_text(f'Su nombre ha sido establecido a: {name}')
+            await update.message.reply_text(f'Gracias {name}')
+            await update.message.reply_text('Ahora puedes compartirme tu wish list enviando uno por uno la url o nombre de los regalos que deseas agregar.')
         except Exception as e:
             print(f'Error en setNameHandler: {e}')
             await update.message.reply_text('Ocurrió un error al establecer tu nombre. Reporta al inutil del administrador para que haga algo.')
