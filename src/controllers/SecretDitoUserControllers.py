@@ -29,7 +29,7 @@ class SecretDitoUserControllers:
                 await update.message.reply_text('Ya estás registrado.')
                 return
 
-            user = User(update.message.from_user.id, update.message.from_user.username)
+            user = User(update.message.from_user.id, update.message.from_user.username, update.message.chat_id)
             await repo.CreateUser(user)
         
             # Lógica para registrar al usuario

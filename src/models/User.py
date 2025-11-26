@@ -2,9 +2,10 @@ from typing import  Dict, Any
 from models.WishListItem import WishListItem
 
 class User:
-    def __init__(self, user_id: int, username: str, name: str = None, wish_list: list = None):
+    def __init__(self, user_id: int, username: str, name: str = None, chat_id: int = None,wish_list: list = None):
         self.user_id = user_id
         self.username = username
+        self.chat_id = chat_id
         self.name = name
         self.wish_list: list[WishListItem] = wish_list if wish_list is not None else []
 
@@ -16,6 +17,7 @@ class User:
         return {
             "user_id": self.user_id,
             "username": self.username,
+            "chat_id": self.chat_id,
             "name": self.name,
             #"amigo_secreto_id": self.amigo_secreto_id,
             "wish_list": [item.to_dict() for item in self.wish_list]
@@ -26,6 +28,7 @@ class User:
         """Crea un objeto User desde un diccionario."""
         user = User(
             user_id=data.get('user_id'),
+            chat_id=data.get('chat_id'),
             username=data.get('username'),
             name=data.get('name'),
             #amigo_secreto_id=data.get('amigo_secreto_id'),
