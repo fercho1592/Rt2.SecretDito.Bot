@@ -25,7 +25,7 @@ class SecretSantaRepo(ISecretDitoRepo):
 
     # --- Implementación de los métodos de la interfaz ISecretDitoRepo ---
     
-    async def getUserById(self, user_id: int) -> Optional[User]:
+    async def GetUserById(self, user_id: int) -> Optional[User]:
         """
         Busca y retorna un usuario por su user_id.
         """
@@ -44,7 +44,7 @@ class SecretSantaRepo(ISecretDitoRepo):
             print(f"Error al cargar el usuario {user_id}: {e}")
             return None
 
-    async def createUser(self, user: User) -> bool:
+    async def CreateUser(self, user: User) -> bool:
         """
         Crea un nuevo archivo JSON para el usuario.
         """
@@ -56,7 +56,7 @@ class SecretSantaRepo(ISecretDitoRepo):
             
         return await self._save_user_to_file(user)
 
-    async def updateUser(self, user: User) -> bool:
+    async def UpdateUser(self, user: User) -> bool:
         """
         Actualiza (sobrescribe) el archivo JSON para el usuario.
         """
