@@ -40,9 +40,8 @@ class SecretDitoUserControllers:
                 await update.message.reply_text('Por favor, regístrate primero usando /registro')
                 return
 
-            for item in user.wish_list:
-                reply_message = await update.message.reply_text(str(item))
-                item.message_ids.append(reply_message.message_id)
+            await user.show_wish_list(update.message.reply_text,\
+                lambda message_response: message_response.message_id)
 
             await repo.UpdateUser(user)
 
@@ -64,7 +63,9 @@ class SecretDitoUserControllers:
                 return
                 # Lógica para registrar el wish list
 
-            user.wish_list.append(WishListItem(item=update.message.text, message_ids=[update.message.message_id]))
+            wishlist_item = WishListItem(item=update.message.text, message_ids=[update.message.message_id])
+            user.add_to_wish_list(wishlist_item)
+
             await repo.UpdateUser(user)
             await context.bot.set_message_reaction(chat_id=update.effective_chat.id,
                                             message_id=update.message.message_id,
@@ -84,27 +85,23 @@ class SecretDitoUserControllers:
             if user is None:
                 return
 
-            # Buscar el ítem en la wish list basado en el message_id
-            item_to_remove = None
-            for item in user.wish_list:
-                if update.message_reaction.message_id in item.message_ids:
-                    item_to_remove = item
-                    break
-
-            if item_to_remove is None:
+            reacted_emoji = [r.emoji for r in update.message_reaction.new_reaction]
+            if all(emoji in [ReactionEmoji.FIRE, ReactionEmoji.THUMBS_DOWN] for emoji in reacted_emoji):
+                return
+            
+            item_removed = user.remove_wish_list_item_by_message_id(update.message_reaction.message_id)
+            if item_removed is None:
                 return
 
-            # Verificar la reacción y eliminar el ítem si es necesario
-            reacted_emoji = [r.emoji for r in update.message_reaction.new_reaction]
-            if any(emoji in [ReactionEmoji.FIRE, ReactionEmoji.THUMBS_DOWN] for emoji in reacted_emoji):
-                user.wish_list.remove(item_to_remove)
-                await repo.UpdateUser(user)
-                await context.bot.set_message_reaction(chat_id=update.effective_chat.id,
-                                                message_id=update.message_reaction.message_id,
-                                                reaction=ReactionEmoji.SEE_NO_EVIL_MONKEY)
-                await update.message.reply_text(f'Ítem {item_to_remove.item} eliminado de tu wish list.')
+            await repo.UpdateUser(user)
+            await context.bot.set_message_reaction(chat_id=update.effective_chat.id,
+                                            message_id=update.message_reaction.message_id,
+                                            reaction=ReactionEmoji.SEE_NO_EVIL_MONKEY)
+                
+            # await update.message.reply_text(f'Ítem {item_removed.item} eliminado de tu wish list.')
         except Exception as e:
             print(f'Error en reactionHandler: {e}')
+            await update.message.reply_text('Ocurrió un error al eliminar un ítem de tu wish list. Reporta al inutil del administrador para que haga algo.')
         pass
 
     @staticmethod
@@ -122,8 +119,9 @@ class SecretDitoUserControllers:
                 await update.message.reply_text('Por favor, proporciona un nombre después del comando. Ejemplo: /set_name Naruto Uzumaki')
                 return
 
-            user.name = name
+            user.set_name(name)
             await repo.UpdateUser(user)
+
             await update.message.reply_text(f'Su nombre ha sido establecido a: {name}')
         except Exception as e:
             print(f'Error en setNameHandler: {e}')
