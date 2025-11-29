@@ -4,6 +4,7 @@ from interfaces.ISecretDitoRepo import ISecretDitoRepo
 from interfaces.IAdminSecretDitoRepo import IAdminSecretDitoRepo
 from pathlib import Path
 from models.User import User
+from models.GraphEdges import GraphEdge
 from typing import Optional
 
 
@@ -71,10 +72,10 @@ class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
                     users.append(User.from_dict(json.load(f)))
         return users
 
-    def load_invalid_edges(self):
+    async def GetInvalidEdges(self) -> list[GraphEdge]:
         with open(self.data_dir / self.invalid_edges_file, 'r', encoding='utf-8') as f:
             edges = json.load(f)
-        invalid = set()
+        invalid = []
         for edge in edges:
-            invalid.add((edge['user_id'], edge['to_user_id']))
+            invalid.append(GraphEdge(edge['user_id'], edge['to_user_id'], edge['value']))
         return invalid
