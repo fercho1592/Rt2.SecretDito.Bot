@@ -1,39 +1,23 @@
-import os
-import json
+
 import random
-from pathlib import Path
+import asyncio
 from itertools import permutations
+from dependency import getAdminRepoInstance
+from models.User import User
+from models.GraphEdges import GraphEdge
 
-DATA_DIR = Path("data")
-INVALID_EDGES_FILE = DATA_DIR / "invalidEdges.json"
-
-def load_users(data_dir):
-    users = []
-    for file in os.listdir(data_dir):
-        if file.endswith(".json") and file != "invalidEdges.json":
-            with open(data_dir / file, "r", encoding="utf-8") as f:
-                users.append(json.load(f))
-    return users
-
-def load_invalid_edges(filepath):
-    with open(filepath, "r", encoding="utf-8") as f:
-        edges = json.load(f)
-    invalid = set()
-    for edge in edges:
-        invalid.add((edge["user_id"], edge["to_user_id"]))
-    return invalid
-
-def build_graph(users, invalid_edges):
+def build_graph(users: list[User], invalid_edges: list[GraphEdge]) -> dict[int, dict[int, int]]:
     graph = {}
-    user_ids = [u["user_id"] for u in users]
+    user_ids = [u.user_id for u in users]
     for uid in user_ids:
         graph[uid] = {}
         for to_uid in user_ids:
             if uid != to_uid:
-                graph[uid][to_uid] = 1 if (uid, to_uid) not in invalid_edges else -1
+                special_edge = next((edge for edge in invalid_edges if edge.from_user_id == uid and edge.to_user_id == to_uid), None)
+                graph[uid][to_uid] = special_edge.value if special_edge else 1
     return graph
 
-def remove_invalid_relations(graph):
+def remove_invalid_relations(graph: dict[int, dict[int, int]]) -> dict[int, dict[int, int]]:
     for uid in graph:
         graph[uid] = {k: v for k, v in graph[uid].items() if v != -1}
     return graph
@@ -67,9 +51,10 @@ def notify_user(user_id, assigned_id):
     print(f"* {user_id} -> {assigned_id}")
 
 if __name__ == '__main__':
+    admin_repo = getAdminRepoInstance()
     # read from data files all users and set nodes for gaph
-    users = load_users(DATA_DIR)
-    invalid_edges = load_invalid_edges(INVALID_EDGES_FILE)
+    users: list[User] = asyncio.run(admin_repo.GetAllUsers())
+    invalid_edges = asyncio.run(admin_repo.GetInvalidEdges())
 
     # create relation among users
     graph = build_graph(users, invalid_edges)
@@ -95,7 +80,11 @@ if __name__ == '__main__':
 
     # call function to notify each user
     n = len(chosen_path)
+    asignations = []
     for i in range(n):
-        user_id = [u for u in users if u["user_id"] == chosen_path[i]][0]["name"]
-        assigned_id = [u for u in users if u["user_id"] == chosen_path[(i + 1) % n]][0]["name"]
-        notify_user(user_id, assigned_id)
+        user: User = [u for u in users if u.user_id == chosen_path[i]][0]
+        assigned_user: User = [u for u in users if u.user_id == chosen_path[(i + 1) % n]][0]
+        user.set_amigo_secreto(assigned_user)
+
+        asignations.append((user, assigned_user))
+        notify_user(user.name, assigned_user.name)

@@ -1,4 +1,4 @@
-from typing import  Dict, Any
+from typing import  Self, Dict, Any
 from models.WishListItem import WishListItem
 
 class User:
@@ -8,6 +8,7 @@ class User:
         self.chat_id = chat_id
         self.name = name
         self.wish_list: list[WishListItem] = wish_list if wish_list is not None else []
+        self.amigo_secreto_id: int | None = None
 
     def to_dict(self):
         """Convierte el objeto a un diccionario para serializar."""
@@ -56,3 +57,6 @@ class User:
                 self.wish_list.remove(item)
                 return item
         return None
+    
+    def set_amigo_secreto(self, amigo_secreto: Self) -> None:
+        self.amigo_secreto_id = amigo_secreto.user_id
