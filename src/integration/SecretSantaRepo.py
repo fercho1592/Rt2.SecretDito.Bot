@@ -73,7 +73,10 @@ class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
         return users
 
     async def GetInvalidEdges(self) -> list[GraphEdge]:
-        with open(self.data_dir / self.invalid_edges_file, 'r', encoding='utf-8') as f:
+        filepath = self.data_dir / self.invalid_edges_file
+        if not filepath.exists():
+            return []
+        with open(filepath, 'r', encoding='utf-8') as f:
             edges = json.load(f)
         invalid = []
         for edge in edges:
