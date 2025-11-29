@@ -9,3 +9,6 @@ class IAdminSecretDitoRepo(ABC):
     @abstractmethod
     async def GetInvalidEdges(self) -> list[GraphEdge]:
         pass
+    @abstractmethod
+    async def SaveAssignationsToTxt(self, assignations: list[tuple[User, User]], filename: str = "assignations.txt") -> None:
+        pass

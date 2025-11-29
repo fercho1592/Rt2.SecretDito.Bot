@@ -2,7 +2,7 @@
 import random
 import asyncio
 from itertools import permutations
-from dependency import getAdminRepoInstance
+from dependency import getAdminRepoInstance, getRepoInstance
 from models.User import User
 from models.GraphEdges import GraphEdge
 
@@ -46,11 +46,8 @@ def path_value(path, graph):
         value += graph[frm][to]
     return value
 
-def notify_user(user_id, assigned_id):
-    # Stub: implement notification logic here
-    print(f"* {user_id} -> {assigned_id}")
-
 if __name__ == '__main__':
+    repo = getRepoInstance()
     admin_repo = getAdminRepoInstance()
     # read from data files all users and set nodes for gaph
     users: list[User] = asyncio.run(admin_repo.GetAllUsers())
@@ -87,4 +84,6 @@ if __name__ == '__main__':
         user.set_amigo_secreto(assigned_user)
 
         asignations.append((user, assigned_user))
-        notify_user(user.name, assigned_user.name)
+        asyncio.run(repo.UpdateUser(user))
+    asyncio.run(admin_repo.SaveAssignationsToTxt(asignations))
+    print("Asignaciones realizadas y guardadas en assignations.txt")

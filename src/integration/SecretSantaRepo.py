@@ -79,3 +79,13 @@ class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
         for edge in edges:
             invalid.append(GraphEdge(edge['user_id'], edge['to_user_id'], edge['value']))
         return invalid
+
+    async def SaveAssignationsToTxt(self, assignations: list[tuple[User, User]], filename: str = "assignations.txt") -> None:
+        filepath = self.data_dir / filename
+        try:
+            with open(filepath, "w", encoding="utf-8") as f:
+                for user1, user2 in assignations:
+                    line = f"({user1.user_id}, {user1.name}) -> ({user2.user_id}, {user2.name})\n"
+                    f.write(line)
+        except Exception as e:
+            print(f"Error al guardar las asignaciones: {e}")
