@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from . import ConfigEnum
+from interfaces.config_reader.ConfigEnum import ConfigEnum
 
 class IConfigService(ABC):
     @abstractmethod
