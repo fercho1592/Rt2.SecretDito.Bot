@@ -32,8 +32,8 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler('start', SecretDitoUserControllers.start_handler))
     app.add_handler(CommandHandler('secret_friend', SecretDitoUserControllers.get_secret_friend_handler))
     app.add_handler(CommandHandler('secret_wish_list', SecretDitoUserControllers.get_secret_friend_wish_list_handler))
-    app.add_handler(MessageReactionHandler(SecretDitoUserControllers.reaction_handler))
-    app.add_handler(MessageHandler(None, SecretDitoUserControllers.wish_list_register_handler))
+    app.add_handler(MessageReactionHandler(SecretDitoUserControllers.delete_from_wish_list_by_reaction_handler))
+    app.add_handler(MessageHandler(None, SecretDitoUserControllers.add_to_wish_list_handler))
 
     print('Running bot...')
     app.run_polling(allowed_updates=Update.ALL_TYPES)

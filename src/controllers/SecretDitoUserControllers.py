@@ -53,7 +53,7 @@ class SecretDitoUserControllers:
         pass
 
     @staticmethod
-    async def wish_list_register_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def add_to_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         try:
             repo = getRepoInstance()
             # validar que usuario este registrado
@@ -73,12 +73,12 @@ class SecretDitoUserControllers:
             if user.username is None and user.name is None:
                 await update.message.reply_text('Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
         except Exception as e:
-            print(f'Error en wishListReigisterHandler: {e}')
+            print(f'Error en addToWishListHandler: {e}')
             await update.message.reply_text('Ocurrió un error al registrar tu wish list. Reporta al inutil del administrador para que haga algo.')
         pass
 
     @staticmethod
-    async def reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def delete_from_wish_list_by_reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         try:
             repo = getRepoInstance()
             user = await repo.GetUserById(update.message_reaction.user.id)
@@ -100,7 +100,7 @@ class SecretDitoUserControllers:
                 
             # await update.message.reply_text(f'Ítem {item_removed.item} eliminado de tu wish list.')
         except Exception as e:
-            print(f'Error en reactionHandler: {e}')
+            print(f'Error en delete_from_wish_list_by_reaction_handler: {e}')
             await update.message.reply_text('Ocurrió un error al eliminar un ítem de tu wish list. Reporta al inutil del administrador para que haga algo.')
         pass
 
