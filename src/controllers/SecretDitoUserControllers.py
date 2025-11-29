@@ -127,3 +127,60 @@ class SecretDitoUserControllers:
             print(f'Error en setNameHandler: {e}')
             await update.message.reply_text('Ocurrió un error al establecer tu nombre. Reporta al inutil del administrador para que haga algo.')
         pass
+
+    @staticmethod
+    async def get_secret_friend_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        del context
+        try:
+            repo = getRepoInstance()
+            user = await repo.GetUserById(update.message.from_user.id)
+            if user is None:
+                await update.message.reply_text('No estás registrado para este Secret Dito.\n '+\
+                    'Notifica al administrador para organizar otro sorteo.')
+                return
+
+            if user.secret_friend_id is None:
+                await update.message.reply_text('Aún no se te ha asignado un amigo secreto. Por favor espera.')
+                return
+
+            secret_friend = await repo.GetUserById(user.secret_friend_id)
+            if secret_friend is None:
+                await update.message.reply_text('Error al obtener los datos de tu amigo secreto. '+\
+                                            'Reporta al inutil del administrador para que haga algo.')
+                return
+
+            message = f'Tu amigo secreto es: {secret_friend.name}'
+            await update.message.reply_text(message)
+        except Exception as e:
+            print(f'Error en getSecretFriendHandler: {e}')
+            await update.message.reply_text('Ocurrió un error al obtener a tu amigo secreto.'+\
+                                            'Reporta al inutil del administrador para que haga algo.')
+        pass
+
+    @staticmethod
+    async def get_secret_friend_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        del context
+        try:
+            repo = getRepoInstance()
+            user = await repo.GetUserById(update.message.from_user.id)
+            if user is None:
+                await update.message.reply_text('No estás registrado para este Secret Dito.\n '+\
+                    'Notifica al administrador para organizar otro sorteo.')
+                return
+
+            if user.secret_friend_id is None:
+                await update.message.reply_text('Aún no se te ha asignado un amigo secreto. Por favor espera.')
+                return
+
+            secret_friend = await repo.GetUserById(user.secret_friend_id)
+            if secret_friend is None:
+                await update.message.reply_text('Error al obtener los datos de tu amigo secreto. '+\
+                                            'Reporta al inutil del administrador para que haga algo.')
+                return
+            
+            await secret_friend.show_wish_list(update.message.reply_text, None)
+        except Exception as e:
+            print(f'Error en getSecretFriendWishListHandler: {e}')
+            await update.message.reply_text('Ocurrió un error al obtener a tu amigo secreto.'+\
+                                            'Reporta al inutil del administrador para que haga algo.')
+        pass

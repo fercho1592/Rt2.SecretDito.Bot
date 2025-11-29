@@ -30,6 +30,8 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler('set_name', SecretDitoUserControllers.set_name_handler))
     app.add_handler(CommandHandler('help', SecretDitoUserControllers.help_handler))
     app.add_handler(CommandHandler('start', SecretDitoUserControllers.start_handler))
+    app.add_handler(CommandHandler('secret_friend', SecretDitoUserControllers.get_secret_friend_handler))
+    app.add_handler(CommandHandler('secret_wish_list', SecretDitoUserControllers.get_secret_friend_wish_list_handler))
     app.add_handler(MessageReactionHandler(SecretDitoUserControllers.reaction_handler))
     app.add_handler(MessageHandler(None, SecretDitoUserControllers.wish_list_register_handler))
 
