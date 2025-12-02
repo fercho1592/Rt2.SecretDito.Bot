@@ -1,5 +1,5 @@
 from typing  import Protocol
-from interfaces.config_reader.ConfigEnum import ConfigEnum
+from interfaces.enums import ConfigEnum
 
 class ConfigServiceProtocol(Protocol):
     def get_service_api_key(self, service_name: ConfigEnum) -> str: ...

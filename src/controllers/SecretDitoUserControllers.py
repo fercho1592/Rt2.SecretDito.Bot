@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.constants import ReactionEmoji
 from models.WishListItem import WishListItem
-from interfaces.ISecretDitoRepo import ISecretDitoRepo
+from interfaces.repo_protocols import ISecretDitoRepo
 
 class SecretDitoUserControllers:
     def __init__(self, repo: ISecretDitoRepo):

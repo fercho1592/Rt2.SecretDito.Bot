@@ -1,8 +1,8 @@
 import asyncio
 from dependency import build_container
 from models.User import User
-from interfaces.IBotApiFacade import IBotApiFacade
-from interfaces.IAdminSecretDitoRepo import IAdminSecretDitoRepo
+from interfaces.bot_api_protocol import IBotApiFacade
+from interfaces.repo_protocols import IAdminSecretDitoRepo
 
 async def notify_all_users(botFacade: IBotApiFacade, repo: IAdminSecretDitoRepo):
     users:list[User] = await repo.GetAllUsers()

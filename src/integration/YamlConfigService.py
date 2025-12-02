@@ -1,8 +1,8 @@
 import yaml
-from interfaces.config_reader.ConfigEnum import ConfigEnum
-from interfaces.config_reader.IConfigService import IConfigService
+from interfaces.enums import ConfigEnum
+from interfaces.config_protocols import ConfigServiceProtocol
 
-class YamlConfigService(IConfigService):
+class YamlConfigService(ConfigServiceProtocol):
     def __init__(self, config_path: str = ".env"):
         with open(config_path, "r") as file:
             self.config = yaml.safe_load(file)

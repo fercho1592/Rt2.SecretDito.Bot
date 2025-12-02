@@ -1,16 +1,13 @@
 import json
 import os
-from interfaces.ISecretDitoRepo import ISecretDitoRepo
-from interfaces.IAdminSecretDitoRepo import IAdminSecretDitoRepo
+from interfaces.repo_protocols import ISecretDitoRepo, IAdminSecretDitoRepo
 from pathlib import Path
 from models.User import User
-from models.graph.GraphEdges import GraphEdge
+from models.graph.GraphEdgesSettings import GraphEdgeSettings
 from typing import Optional
-
 
 USER_DATA_DIR = Path('data')
 INVALID_EDGES_FILE =  'graph_settings.json'
-
 
 class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
     def __init__(self, data_dir=USER_DATA_DIR, invalid_edges_file=INVALID_EDGES_FILE):
@@ -71,7 +68,7 @@ class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
                     users.append(User.from_dict(json.load(f)))
         return users
 
-    async def GetInvalidEdges(self) -> list[GraphEdge]:
+    async def GetInvalidEdges(self) -> list[GraphEdgeSettings]:
         filepath = self.data_dir / self.invalid_edges_file
         if not filepath.exists():
             return []
@@ -79,7 +76,7 @@ class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
             edges = json.load(f)
         invalid = []
         for edge in edges:
-            invalid.append(GraphEdge(edge['user_id'], edge['to_user_id'], edge['value']))
+            invalid.append(GraphEdgeSettings(edge['user_id'], edge['to_user_id'], edge['value']))
         return invalid
 
     async def SaveAssignationsToTxt(self, assignations: list[tuple[User, User]], filename: str = "assignations.txt") -> None:

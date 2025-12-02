@@ -1,8 +1,8 @@
 import asyncio
-from dependency import getAdminRepoInstance, getRepoInstance, getBotApiFacade
+from dependency import build_container
 from models.User import User
-from interfaces.IBotApiFacade import IBotApiFacade
-from interfaces.IAdminSecretDitoRepo import IAdminSecretDitoRepo
+from interfaces.bot_api_protocol import IBotApiFacade
+from interfaces.repo_protocols import IAdminSecretDitoRepo
 
 async def notify_all_users(botFacade: IBotApiFacade, repo: IAdminSecretDitoRepo):
     users:list[User] = await repo.GetAllUsers()
@@ -18,9 +18,10 @@ async def notify_user(botFacade: IBotApiFacade, user: User):
     await botFacade.notify_user(user, message)
 
 if __name__ == '__main__':
-    adminRepo = getAdminRepoInstance()
-    repo = getRepoInstance()
-    bot_api = getBotApiFacade()
+    container = build_container()
+    adminRepo = container.resolve(IAdminSecretDitoRepo)
+    repo = container.resolve(IAdminSecretDitoRepo)
+    bot_api = container.resolve(IBotApiFacade)
 
     asyncio.run(notify_all_users(bot_api, adminRepo))
     pass

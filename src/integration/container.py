@@ -5,7 +5,7 @@ class Container:
         self._providers: dict[str, tuple[Callable[[], Any]], bool] = {}
         self._singleton: dict[str, Any] = {}
 
-    def registerAs(self, name: Any, provider: Callable[[], Any], is_singleton: bool = False) -> None:
+    def register(self, name: Any, provider: Callable[[], Any], is_singleton: bool = False) -> None:
         self._providers[name.__name__] = (provider, is_singleton)
 
     def resolve(self, name:Any) -> Any:

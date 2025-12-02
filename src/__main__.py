@@ -1,14 +1,14 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Application, MessageReactionHandler, ConversationHandler
 from dependency import build_container
-from interfaces import ISecretDitoRepo
-from interfaces.config_reader.ConfigEnum import ConfigEnum
-from interfaces.config_reader.protocols import ConfigServiceProtocol
-
+from integration.container import Container
+from interfaces.repo_protocols import ISecretDitoRepo
+from interfaces.enums import ConfigEnum
+from interfaces.config_protocols import ConfigServiceProtocol
 from controllers.SecretDitoUserControllers import SecretDitoUserControllers
 from controllers.SecretDitoUserConversationController import SecretDitoUserConversationController
 
-def BuildApp(container) -> Application:
+def BuildApp(container: Container) -> Application:
     config_service: ConfigServiceProtocol = container.resolve(ConfigServiceProtocol)
     bot_token = config_service.get_service_api_key(ConfigEnum.TELEGRAM_TOKEN)
 
