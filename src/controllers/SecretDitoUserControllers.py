@@ -1,12 +1,15 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.constants import ReactionEmoji
-from dependency import getRepoInstance
 from models.WishListItem import WishListItem
+from interfaces.ISecretDitoRepo import ISecretDitoRepo
 
 class SecretDitoUserControllers:
-    @staticmethod
-    async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    def __init__(self, repo: ISecretDitoRepo):
+        self.repo = repo
+        pass
+
+    async def start_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
         welcome_text = (
             '¡Bienvenido a SecretDito Bot!\n'
@@ -16,8 +19,7 @@ class SecretDitoUserControllers:
         await update.message.reply_text(welcome_text)
         pass
 
-    @staticmethod
-    async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def help_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
         help_text = (
             'Comandos disponibles:\n'
@@ -29,13 +31,11 @@ class SecretDitoUserControllers:
         await update.message.reply_text(help_text)
         pass
 
-    @staticmethod
-    async def get_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def get_wish_list_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
         try:
-            repo = getRepoInstance()
             # validar que usuario este registrado
-            user = await repo.GetUserById(update.message.from_user.id)
+            user = await self.repo.GetUserById(update.message.from_user.id)
             if user is None:
                 await update.message.reply_text('Por favor, regístrate primero usando /registro')
                 return
@@ -43,7 +43,7 @@ class SecretDitoUserControllers:
             await user.show_wish_list(update.message.reply_text,\
                 lambda message_response: message_response.message_id)
 
-            await repo.UpdateUser(user)
+            await self.repo.UpdateUser(user)
 
             if user.username is None and user.name is None:
                 await update.message.reply_text('Usa el comando /set_name para establecer tu nombre y que otros usuarios puedan identificarte mejor.')
@@ -52,12 +52,10 @@ class SecretDitoUserControllers:
             await update.message.reply_text('Ocurrió un error al obtener tu wish list. Reporta al inutil del administrador para que haga algo.')
         pass
 
-    @staticmethod
-    async def add_to_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def add_to_wish_list_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         try:
-            repo = getRepoInstance()
             # validar que usuario este registrado
-            user = await repo.GetUserById(update.message.from_user.id)
+            user = await self.repo.GetUserById(update.message.from_user.id)
             if user is None:
                 await update.message.reply_text('Por favor, regístrate primero usando /registro')
                 return
@@ -66,7 +64,7 @@ class SecretDitoUserControllers:
             wishlist_item = WishListItem(item=update.message.text, message_ids=[update.message.message_id])
             user.add_to_wish_list(wishlist_item)
 
-            await repo.UpdateUser(user)
+            await self.repo.UpdateUser(user)
             await context.bot.set_message_reaction(chat_id=update.effective_chat.id,
                                             message_id=update.message.message_id,
                                             reaction=ReactionEmoji.CHRISTMAS_TREE)
@@ -77,11 +75,9 @@ class SecretDitoUserControllers:
             await update.message.reply_text('Ocurrió un error al registrar tu wish list. Reporta al inutil del administrador para que haga algo.')
         pass
 
-    @staticmethod
-    async def delete_from_wish_list_by_reaction_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def delete_from_wish_list_by_reaction_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         try:
-            repo = getRepoInstance()
-            user = await repo.GetUserById(update.message_reaction.user.id)
+            user = await self.repo.GetUserById(update.message_reaction.user.id)
             if user is None:
                 return
 
@@ -93,7 +89,7 @@ class SecretDitoUserControllers:
             if item_removed is None:
                 return
 
-            await repo.UpdateUser(user)
+            await self.repo.UpdateUser(user)
             await context.bot.set_message_reaction(chat_id=update.effective_chat.id,
                                             message_id=update.message_reaction.message_id,
                                             reaction=ReactionEmoji.SEE_NO_EVIL_MONKEY)
@@ -104,11 +100,9 @@ class SecretDitoUserControllers:
             await update.message.reply_text('Ocurrió un error al eliminar un ítem de tu wish list. Reporta al inutil del administrador para que haga algo.')
         pass
 
-    @staticmethod
-    async def set_name_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def set_name_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         try:
-            repo = getRepoInstance()
-            user = await repo.GetUserById(update.message.from_user.id)
+            user = await self.repo.GetUserById(update.message.from_user.id)
             if user is None:
                 await update.message.reply_text('Por favor, regístrate primero usando /registro')
                 return
@@ -120,7 +114,7 @@ class SecretDitoUserControllers:
                 return
 
             user.set_name(name)
-            await repo.UpdateUser(user)
+            await self.repo.UpdateUser(user)
 
             await update.message.reply_text(f'Su nombre ha sido establecido a: {name}')
         except Exception as e:
@@ -128,12 +122,10 @@ class SecretDitoUserControllers:
             await update.message.reply_text('Ocurrió un error al establecer tu nombre. Reporta al inutil del administrador para que haga algo.')
         pass
 
-    @staticmethod
-    async def get_secret_friend_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def get_secret_friend_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
         try:
-            repo = getRepoInstance()
-            user = await repo.GetUserById(update.message.from_user.id)
+            user = await self.repo.GetUserById(update.message.from_user.id)
             if user is None:
                 await update.message.reply_text('No estás registrado para este Secret Dito.\n '+\
                     'Notifica al administrador para organizar otro sorteo.')
@@ -143,7 +135,7 @@ class SecretDitoUserControllers:
                 await update.message.reply_text('Aún no se te ha asignado un amigo secreto. Por favor espera.')
                 return
 
-            secret_friend = await repo.GetUserById(user.secret_friend_id)
+            secret_friend = await self.repo.GetUserById(user.secret_friend_id)
             if secret_friend is None:
                 await update.message.reply_text('Error al obtener los datos de tu amigo secreto. '+\
                                             'Reporta al inutil del administrador para que haga algo.')
@@ -157,12 +149,10 @@ class SecretDitoUserControllers:
                                             'Reporta al inutil del administrador para que haga algo.')
         pass
 
-    @staticmethod
-    async def get_secret_friend_wish_list_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def get_secret_friend_wish_list_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
         try:
-            repo = getRepoInstance()
-            user = await repo.GetUserById(update.message.from_user.id)
+            user = await self.repo.GetUserById(update.message.from_user.id)
             if user is None:
                 await update.message.reply_text('No estás registrado para este Secret Dito.\n '+\
                     'Notifica al administrador para organizar otro sorteo.')
@@ -172,12 +162,12 @@ class SecretDitoUserControllers:
                 await update.message.reply_text('Aún no se te ha asignado un amigo secreto. Por favor espera.')
                 return
 
-            secret_friend = await repo.GetUserById(user.secret_friend_id)
+            secret_friend = await self.repo.GetUserById(user.secret_friend_id)
             if secret_friend is None:
                 await update.message.reply_text('Error al obtener los datos de tu amigo secreto. '+\
                                             'Reporta al inutil del administrador para que haga algo.')
                 return
-            
+
             await secret_friend.show_wish_list(update.message.reply_text, None)
         except Exception as e:
             print(f'Error en getSecretFriendWishListHandler: {e}')
