@@ -9,13 +9,12 @@ async def notify_all_users(botFacade: IBotApiFacade, repo: IAdminSecretDitoRepo)
     for user in users:
         if len(user.wish_list) > 0:
             continue
-        await notify_user(botFacade, user)
+        
+        message = f'Hey {user.name}!!, Recuerda actualizar tu lista de regalos\n'+\
+        'Comparte los items que te interesan para que tu amigo secreto sepa que regalarte!'
+        await botFacade.notify_user(user, message)
     pass
 
-async def notify_user(botFacade: IBotApiFacade, user: User):
-    message = f'Hey {user.name}!!, Recuerda actualizar tu lista de regalos\n'+\
-        'Comparte los items que te interesan para que tu amigo secreto sepa que regalarte!'
-    await botFacade.notify_user(user, message)
 
 if __name__ == '__main__':
     container = build_container()
