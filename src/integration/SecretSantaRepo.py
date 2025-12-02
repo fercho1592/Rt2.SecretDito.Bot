@@ -4,7 +4,7 @@ from interfaces.ISecretDitoRepo import ISecretDitoRepo
 from interfaces.IAdminSecretDitoRepo import IAdminSecretDitoRepo
 from pathlib import Path
 from models.User import User
-from models.GraphEdges import GraphEdge
+from models.graph.GraphEdges import GraphEdge
 from typing import Optional
 
 
@@ -14,7 +14,6 @@ INVALID_EDGES_FILE =  'graph_settings.json'
 
 class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
     def __init__(self, data_dir=USER_DATA_DIR, invalid_edges_file=INVALID_EDGES_FILE):
-
         self.data_dir = Path(data_dir)
         self.invalid_edges_file = invalid_edges_file
         self.data_dir.mkdir(parents=True, exist_ok=True)

@@ -4,7 +4,7 @@ import asyncio
 from itertools import permutations
 from dependency import getAdminRepoInstance, getRepoInstance
 from models.User import User
-from models.GraphEdges import GraphEdge
+from models.graph.GraphEdges import GraphEdge
 
 def build_graph(users: list[User], invalid_edges: list[GraphEdge]) -> dict[int, dict[int, int]]:
     graph = {}
