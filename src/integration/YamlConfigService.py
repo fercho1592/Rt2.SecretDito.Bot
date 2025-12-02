@@ -7,7 +7,7 @@ class YamlConfigService(ConfigServiceProtocol):
         with open(config_path, "r") as file:
             self.config = yaml.safe_load(file)
 
-    def get_service_api_key(self, service_name: ConfigEnum) -> str:
+    def get_config_value(self, service_name: ConfigEnum) -> str:
         return self.config.get("services", {}).get(str(service_name), "")
 
     def get_all_services(self) -> dict:

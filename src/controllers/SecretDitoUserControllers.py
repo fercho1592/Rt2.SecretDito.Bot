@@ -3,30 +3,46 @@ from telegram.ext import ContextTypes
 from telegram.constants import ReactionEmoji
 from models.WishListItem import WishListItem
 from interfaces.repo_protocols import ISecretDitoRepo
+from interfaces.config_protocols import FlagServiceProtocol
 
 class SecretDitoUserControllers:
-    def __init__(self, repo: ISecretDitoRepo):
+    def __init__(self, repo: ISecretDitoRepo, flag_service: FlagServiceProtocol) -> None:
         self.repo = repo
+        self.flag_service = flag_service
         pass
 
     async def start_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
-        welcome_text = (
-            '¡Bienvenido a SecretDito Bot!\n'
+        if(self.flag_service.is_asignation_done()):
+            await update.message.reply_text(
+                'El asignación de amigos secretos ya ha sido realizada. ' +
+                'Por favor contacta al administrador para más información.'
+            )
+            return
+        
+        await update.message.reply_text('¡Bienvenido a SecretDito Bot!\n'
             'Usa /registro para registrarte y empezar a llenar tu wish list.\n'
-            'O usa el comando /help para ver los comandos disponibles.'
-        )
-        await update.message.reply_text(welcome_text)
+            'O usa el comando /help para ver los comandos disponibles.')
         pass
 
     async def help_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         del context
+        if(self.flag_service.is_asignation_done()):
+            await update.message.reply_text(
+                'Comandos disponibles:\n'
+                '/wish_list - Tu lista de deseos.\n'
+                '/secret_friend - Nombre de tu amigo secreto.\n'
+                '/secret_friend_wish_list - Lista de deseos de tu amigo secreto.\n'
+                'Envía mensajes con el ítem que deseas agregar a tu lista.\n'
+                'Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista.\n'
+            )
+            return
         help_text = (
             'Comandos disponibles:\n'
             '/registro - Regístrate para usar el bot.\n'
-            '/wish_list - Obtén tu lista de deseos.\n'
-            'Envía mensajes con los ítems que deseas agregar a tu lista de deseos.\n'
-            'Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista de deseos.\n'
+            '/wish_list - Tu lista de deseos.\n'
+            'Envía mensajes con el ítem que deseas agregar a tu lista.\n'
+            'Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista.\n'
         )
         await update.message.reply_text(help_text)
         pass

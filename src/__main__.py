@@ -4,13 +4,13 @@ from dependency import build_container
 from integration.container import Container
 from interfaces.repo_protocols import ISecretDitoRepo
 from interfaces.enums import ConfigEnum
-from interfaces.config_protocols import ConfigServiceProtocol
+from interfaces.config_protocols import ConfigServiceProtocol, FlagServiceProtocol
 from controllers.SecretDitoUserControllers import SecretDitoUserControllers
 from controllers.SecretDitoUserConversationController import SecretDitoUserConversationController
 
 def BuildApp(container: Container) -> Application:
     config_service: ConfigServiceProtocol = container.resolve(ConfigServiceProtocol)
-    bot_token = config_service.get_service_api_key(ConfigEnum.TELEGRAM_TOKEN)
+    bot_token = config_service.get_config_value(ConfigEnum.TELEGRAM_TOKEN)
 
     app = ApplicationBuilder().token(bot_token).build()
     return app
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     print('Starting bot...')
     container = build_container()
     app = BuildApp(container)
-    user_controllers = SecretDitoUserControllers(container.resolve(ISecretDitoRepo))
+    user_controllers = SecretDitoUserControllers(container.resolve(ISecretDitoRepo), container.resolve(FlagServiceProtocol))
 
     print('Registering handlers...')
     app.add_handler(ConversationHandler(

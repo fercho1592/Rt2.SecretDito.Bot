@@ -10,11 +10,11 @@ USER_DATA_DIR = Path('data')
 INVALID_EDGES_FILE =  'graph_settings.json'
 
 class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
-    def __init__(self, data_dir=USER_DATA_DIR, invalid_edges_file=INVALID_EDGES_FILE):
+    def __init__(self, assignation_file, data_dir=USER_DATA_DIR, invalid_edges_file=INVALID_EDGES_FILE):
         self.data_dir = Path(data_dir)
         self.invalid_edges_file = invalid_edges_file
         self.data_dir.mkdir(parents=True, exist_ok=True)
-
+        self.assignation_file = assignation_file
     def _get_filepath(self, user_id: int) -> Path:
         return self.data_dir / f'{user_id}.json'
 
@@ -79,8 +79,8 @@ class SecretSantaRepo(ISecretDitoRepo, IAdminSecretDitoRepo):
             invalid.append(GraphEdgeSettings(edge['user_id'], edge['to_user_id'], edge['value']))
         return invalid
 
-    async def SaveAssignationsToTxt(self, assignations: list[tuple[User, User]], filename: str = "assignations.txt") -> None:
-        filepath = self.data_dir / filename
+    async def SaveAssignationsToTxt(self, assignations: list[tuple[User, User]]) -> None:
+        filepath = self.data_dir / self.assignation_file
         try:
             with open(filepath, "w", encoding="utf-8") as f:
                 for user1, user2 in assignations:

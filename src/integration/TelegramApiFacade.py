@@ -5,7 +5,7 @@ from interfaces.enums import ConfigEnum
 
 class TelegramApiFacade:
     def __init__(self, config_service: ConfigServiceProtocol):
-        self.BotToken = config_service.get_service_api_key(ConfigEnum.TELEGRAM_TOKEN)
+        self.BotToken = config_service.get_config_value(ConfigEnum.TELEGRAM_TOKEN)
 
     async def notify_user(self, user: User, message: str) -> None:
         bot = Bot(token=self.BotToken)
