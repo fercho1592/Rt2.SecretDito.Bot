@@ -1,0 +1,6 @@
+from typing  import Protocol
+from interfaces.config_reader.ConfigEnum import ConfigEnum
+
+class ConfigServiceProtocol(Protocol):
+    def get_service_api_key(self, service_name: ConfigEnum) -> str: ...
+    def get_all_services(self) -> dict: ...
