@@ -32,7 +32,7 @@ class SecretDitoUserControllers:
                 'Comandos disponibles:\n'
                 '/wish_list - Tu lista de deseos.\n'
                 '/secret_friend - Nombre de tu amigo secreto.\n'
-                '/secret_friend_wish_list - Lista de deseos de tu amigo secreto.\n'
+                '/secret_wish_list - Lista de deseos de tu amigo secreto.\n'
                 'Envía mensajes con el ítem que deseas agregar a tu lista.\n'
                 'Reacciona a un regalo con 🔥 o 👎 para eliminarlo de tu lista.\n'
             )
