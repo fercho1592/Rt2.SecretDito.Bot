@@ -34,7 +34,7 @@ Also there is data/graph_setting.json file, that you can use to set some rules t
 
 ### Running Commands
 
-    # Runing main theat for bot
+    # Running main thread for bot
     python3 src
 
     # Run user assignation
@@ -42,3 +42,11 @@ Also there is data/graph_setting.json file, that you can use to set some rules t
 
     # Run user notification to fill their wish list
     python3 ./src/run_wish_list_empty_notification.py
+
+## Next Things to DO
+1. Convert this project into a Docker image to be used without all Python installation steps
+2. Check how to implement this project serverless mode (Azure Functions, Lambda functions)
+3. Create others repository implementations to use others DBs (Mongo, Postgress, ...)
+4. Add commando to ask your secret friend directly
+5. Add implementation to use Whatsapp or other message services
+6. Add function to use older results
