@@ -49,17 +49,7 @@ Also there is data/graph_setting.json file, that you can use to set some rules t
 
 ### Build Docker Image
 
-    docker build -t secretdito-bot .
-
-### Tagging Docker Images
-
-To add a tag or version to your Docker image, use the -t option with your desired tag (e.g., v1.0.0):
-
     docker build -t secretdito-bot:1.0.0 .
-
-To use a tagged image in docker-compose.yml, update the image field:
-
-    image: secretdito-bot:1.0.0
 
 ### Using Docker Compose
 
@@ -93,9 +83,8 @@ You can use this method to run any script inside the container, such as:
 
 ## Next Things to DO
 
-1. Convert this project into a Docker image to be used without all Python installation steps
-2. Check how to implement this project serverless mode (Azure Functions, Lambda functions)
-3. Create others repository implementations to use others DBs (Mongo, Postgress, ...)
-4. Add commando to ask your secret friend directly
-5. Add implementation to use Whatsapp or other message services
-6. Add function to use older results
+1. Check how to implement this project serverless mode (Azure Functions, Lambda functions)
+2. Create others repository implementations to use others DBs (Mongo, Postgress, ...)
+3. Add commando to ask your secret friend directly
+4. Add implementation to use Whatsapp or other message services
+5. Add function to use older results
