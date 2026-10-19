@@ -1,25 +1,25 @@
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
-from controllers.SecretDitoUserControllers import SecretDitoUserControllers
-from dependency import getRepoInstance
+from interfaces.repo_protocols import ISecretDitoRepo
 from models.User import User
 
 class SecretDitoUserConversationController:
+    def __init__(self, repo: ISecretDitoRepo):
+        self.repo = repo
+
     class ConversationState:
         SET_NAME = 0
 
-    @staticmethod
-    async def entry_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    async def entry_point(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         del context
         try:
-            repo = getRepoInstance()
-            user = await repo.GetUserById(update.message.from_user.id)
+            user = await self.repo.GetUserById(update.message.from_user.id)
             if user is not None:
                 await update.message.reply_text('Ya estás registrado.')
                 return
 
             user = User(update.message.from_user.id, update.message.from_user.username, None, update.message.chat.id)
-            await repo.CreateUser(user)
+            await self.repo.CreateUser(user)
         
             # Lógica para registrar al usuario
             await update.message.reply_text(f'Bien {user.username if user.username else update.message.from_user.first_name}, con esto ya seras tomado en cuenta para el sorteo.')
@@ -30,12 +30,10 @@ class SecretDitoUserConversationController:
         pass
         return SecretDitoUserConversationController.ConversationState.SET_NAME
 
-    @staticmethod
-    async def set_name_state(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    async def set_name_state(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         del context
         try:
-            repo = getRepoInstance()
-            user = await repo.GetUserById(update.message.from_user.id)
+            user = await self.repo.GetUserById(update.message.from_user.id)
             if user is None:
                 await update.message.reply_text('Por favor, regístrate primero usando /registro')
                 return
@@ -47,7 +45,7 @@ class SecretDitoUserConversationController:
                 return
 
             user.name = name
-            await repo.UpdateUser(user)
+            await self.repo.UpdateUser(user)
             await update.message.reply_text(f'Gracias {name}')
             await update.message.reply_text('Ahora puedes compartirme tu wish list enviando uno por uno la url o nombre de los regalos que deseas agregar.')
         except Exception as e:

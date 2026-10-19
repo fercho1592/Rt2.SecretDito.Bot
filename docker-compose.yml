@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  secretdito-bot:
+    build: .
+    image: secretdito-bot:latest
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    volumes:
+      - ./data:/app/data

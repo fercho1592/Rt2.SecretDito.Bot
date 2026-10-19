@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-class GraphEdge:
+class GraphEdgeSettings:
     def __init__(self, from_user_id: int, to_user_id: int, value: int):
         self.from_user_id = from_user_id
         self.to_user_id = to_user_id
@@ -9,7 +9,7 @@ class GraphEdge:
     @staticmethod
     def from_dict(data: Dict[str, Any]):
         """Crea un objeto User desde un diccionario."""
-        edge = GraphEdge(
+        edge = GraphEdgeSettings(
             from_user_id=data.get('user_id'),
             to_user_id=data.get('to_user_id'),
             value=data.get('value')
